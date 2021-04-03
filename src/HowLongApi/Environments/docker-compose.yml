@@ -1,0 +1,33 @@
+version: "3.3"
+
+volumes:
+  mysqldata:
+
+networks:
+  prod:
+
+services:
+  mysql:
+    image: mysql/mysql-server:latest
+    restart: always
+    environment:
+      - MYSQL_ROOT_PASSWORD=howlong
+      - MYSQL_DATABASE=howlong
+    volumes:
+      - mysqldata:/var/lib/mysql
+    networks:
+      - prod
+
+  api-1:
+    build:
+      context: .././
+      dockerfile: ./Dockerfile
+    networks:
+      - prod
+    restart: always
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - DBHOST=mysql
+      - DBPASSWORD=KJ2K346LKkl324
+    depends_on:
+      - mysql
