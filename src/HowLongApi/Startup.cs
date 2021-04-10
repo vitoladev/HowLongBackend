@@ -47,11 +47,11 @@ namespace HowLongApi
                 Port = databaseUri.Port,
                 Username = userInfo[0],
                 Password = userInfo[1],
-                Database = databaseUri.LocalPath.TrimStart('/')
+                Database = databaseUri.LocalPath.TrimStart('/'),
             };
 
             services.AddDbContext<ApiContext>(options =>
-                options.UseNpgsql(builder.ToString())
+                options.UseNpgsql($"{builder};Sslmode=Require;Trust Server Certificate=true")
             );
 
             services.AddCors(options =>
