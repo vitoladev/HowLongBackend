@@ -80,6 +80,7 @@ namespace HowLongApi
             });
 
             services.AddScoped(typeof(ITeamRepository<>), typeof(TeamRepository<>));
+
             services.AddTransient(typeof(ITeamBusiness), typeof(TeamBusiness));
 
             services.AddIdentity<User, IdentityRole>(options =>
@@ -124,6 +125,8 @@ namespace HowLongApi
             app.UseCors();
 
             app.UseAuthentication();
+
+            SeedUser.Initialize(app);
 
             app.UseAuthorization();
 
