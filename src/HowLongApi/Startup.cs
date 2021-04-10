@@ -114,9 +114,7 @@ namespace HowLongApi
             using (IServiceScope scope = app.ApplicationServices.GetService<IServiceScopeFactory>().CreateScope())
             {
                 var apiContext = scope.ServiceProvider.GetRequiredService<ApiContext>();
-                var identityContext = scope.ServiceProvider.GetRequiredService<AuthDbContext>();
                 apiContext.Database.Migrate();
-                identityContext.Database.Migrate();
             }
 
             app.UseHttpsRedirection();
