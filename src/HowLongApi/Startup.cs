@@ -4,7 +4,6 @@ using HowLongApi.Infrastructure.Interfaces;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -12,17 +11,13 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
 using System;
-using Pomelo.EntityFrameworkCore.MySql;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using HowLongApi.Businesses;
-using Microsoft.Extensions.FileProviders;
-using System.IO;
-using Microsoft.Net.Http.Headers;
 using HowLongApi.Security;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
+using static System.Environment;
+using Npgsql;
+using Microsoft.EntityFrameworkCore.Sqlite;
 
 namespace HowLongApi
 {
@@ -38,19 +33,31 @@ namespace HowLongApi
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            var connectionString = System.Environment.GetEnvironmentVariable("DB_CONNECTION_STRING", EnvironmentVariableTarget.Process);
-            services.AddDbContext<ApiContext>(options =>
-                options.UseMySql(connectionString, new MySqlServerVersion(new Version(8, 0)))
+            services.AddDbContext<AuthDbContext>(options =>
+                options.UseSqlite(Configuration.GetConnectionString("AuthDb"))
             );
 
-            services.AddDbContext<AuthDbContext>(options =>
-                options.UseMySql(Configuration.GetConnectionString("AUTH_DB"),
-                new MySqlServerVersion(new Version(8, 0))));
+            var databaseUrl = GetEnvironmentVariable("DATABASE_URL");
+            var databaseUri = new Uri(databaseUrl);
+            var userInfo = databaseUri.UserInfo.Split(':');
+
+            var builder = new NpgsqlConnectionStringBuilder
+            {
+                Host = databaseUri.Host,
+                Port = databaseUri.Port,
+                Username = userInfo[0],
+                Password = userInfo[1],
+                Database = databaseUri.LocalPath.TrimStart('/')
+            };
+
+            services.AddDbContext<ApiContext>(options =>
+                options.UseNpgsql(builder.ToString())
+            );
 
             services.AddCors(options =>
             {
                 options.AddPolicy("Query",
-                    builder => builder.WithOrigins("http://localhost:3000"));
+                    builder => builder.WithOrigins("https://howlong-front.herokuapp.com/"));
             });
 
             services.AddAuthentication(options =>
@@ -81,7 +88,8 @@ namespace HowLongApi
                 options.Password.RequireNonAlphanumeric = false;
                 options.Password.RequireUppercase = false;
                 options.Password.RequireLowercase = false;
-            }).AddEntityFrameworkStores<AuthDbContext>();
+            }).AddEntityFrameworkStores<AuthDbContext>()
+            .AddDefaultTokenProviders();
 
             services.ConfigureApplicationCookie(options => options.LoginPath = "/Usuario/Login");
 
@@ -101,6 +109,14 @@ namespace HowLongApi
                 app.UseDeveloperExceptionPage();
                 app.UseSwagger();
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "HowLongApi v1"));
+            }
+
+            using (IServiceScope scope = app.ApplicationServices.GetService<IServiceScopeFactory>().CreateScope())
+            {
+                var apiContext = scope.ServiceProvider.GetRequiredService<ApiContext>();
+                var identityContext = scope.ServiceProvider.GetRequiredService<AuthDbContext>();
+                apiContext.Database.Migrate();
+                identityContext.Database.Migrate();
             }
 
             app.UseHttpsRedirection();
