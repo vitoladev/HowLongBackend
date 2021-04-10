@@ -112,12 +112,6 @@ namespace HowLongApi
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "HowLongApi v1"));
             }
 
-            using (IServiceScope scope = app.ApplicationServices.GetService<IServiceScopeFactory>().CreateScope())
-            {
-                var apiContext = scope.ServiceProvider.GetRequiredService<ApiContext>();
-                apiContext.Database.Migrate();
-            }
-
             app.UseHttpsRedirection();
 
             app.UseRouting();
