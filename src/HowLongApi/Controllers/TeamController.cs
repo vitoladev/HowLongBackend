@@ -99,7 +99,7 @@ namespace HowLongApi.Controllers
             }
             catch (Exception)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, "Error updating person");
+                return StatusCode(StatusCodes.Status500InternalServerError, "Error on trying to update person");
             }
         }
 
@@ -118,7 +118,7 @@ namespace HowLongApi.Controllers
             }
             catch (Exception)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, "Error deleting person");
+                return StatusCode(StatusCodes.Status500InternalServerError, "Error on trying to delete person");
             }
         }
     }

@@ -59,7 +59,8 @@ namespace HowLongApi.Businesses
             var team = await _repository.GetByIdAsync(id);
             await _repository.DeleteAsync(team);
         }
-        public async Task<byte[]> Image(int id) {
+        public async Task<byte[]> Image(int id)
+        {
             var teams = await _repository.ListAsync();
             return teams
                 .Where(l => l.Id == id)

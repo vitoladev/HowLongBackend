@@ -36,7 +36,7 @@ namespace HowLongApi.Infrastructure
 
         public async Task UpdateAsync(T entity)
         {
-            _dbContext.Entry(entity).State = EntityState.Modified;
+            _dbContext.Update(entity);
             await _dbContext.SaveChangesAsync();
         }
 
