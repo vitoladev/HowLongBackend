@@ -61,6 +61,21 @@ namespace HowLongApi
                     );
             });
 
+            services.AddScoped(typeof(ITeamRepository<>), typeof(TeamRepository<>));
+
+            services.AddTransient(typeof(ITeamBusiness), typeof(TeamBusiness));
+
+            services.AddIdentity<User, IdentityRole>(options =>
+            {
+                options.Password.RequiredLength = 3;
+                options.Password.RequireNonAlphanumeric = false;
+                options.Password.RequireUppercase = false;
+                options.Password.RequireLowercase = false;
+            }).AddEntityFrameworkStores<AuthDbContext>()
+            .AddDefaultTokenProviders();
+
+            services.AddControllers();
+
             services.AddAuthentication(options =>
             {
                 options.DefaultAuthenticateScheme = "JwtBearer";
@@ -79,23 +94,6 @@ namespace HowLongApi
                     ValidAudience = "Users",
                 };
             });
-
-            services.AddScoped(typeof(ITeamRepository<>), typeof(TeamRepository<>));
-
-            services.AddTransient(typeof(ITeamBusiness), typeof(TeamBusiness));
-
-            services.AddIdentity<User, IdentityRole>(options =>
-            {
-                options.Password.RequiredLength = 3;
-                options.Password.RequireNonAlphanumeric = false;
-                options.Password.RequireUppercase = false;
-                options.Password.RequireLowercase = false;
-            }).AddEntityFrameworkStores<AuthDbContext>()
-            .AddDefaultTokenProviders();
-
-            services.ConfigureApplicationCookie(options => options.LoginPath = "/Usuario/Login");
-
-            services.AddControllers();
 
             services.AddSwaggerGen(c =>
             {

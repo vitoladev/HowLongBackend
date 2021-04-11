@@ -29,6 +29,7 @@ namespace HowLongApi.Controllers
         }
 
         [HttpGet("sport/{sport}")]
+        [AllowAnonymous]
         public async Task<ActionResult> GetBySport(Sport sport)
         {
             var team = await _teamBusiness.GetBySport(sport);
@@ -36,6 +37,7 @@ namespace HowLongApi.Controllers
         }
 
         [HttpGet("{id}")]
+        [AllowAnonymous]
         public async Task<ActionResult> GetById(int id)
         {
             try
@@ -116,7 +118,7 @@ namespace HowLongApi.Controllers
             }
             catch (Exception)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, "Error updating person");
+                return StatusCode(StatusCodes.Status500InternalServerError, "Error deleting person");
             }
         }
     }
