@@ -76,6 +76,8 @@ namespace HowLongApi
 
             services.AddControllers();
 
+            var key = GetEnvironmentVariable("key");
+
             services.AddAuthentication(options =>
             {
                 options.DefaultAuthenticateScheme = "JwtBearer";
@@ -88,7 +90,7 @@ namespace HowLongApi
                     ValidateAudience = true,
                     ValidateLifetime = true,
                     ValidateIssuerSigningKey = true,
-                    IssuerSigningKey = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes("s18239411cz/adaq3dsahnanjkjoei#d!@#pds$c!#$!#@")),
+                    IssuerSigningKey = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(key)),
                     ClockSkew = TimeSpan.FromMinutes(30),
                     ValidIssuer = "HowLong",
                     ValidAudience = "Users",
