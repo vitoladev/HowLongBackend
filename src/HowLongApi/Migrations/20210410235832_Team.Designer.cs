@@ -10,8 +10,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace HowLongApi.Migrations
 {
     [DbContext(typeof(ApiContext))]
-    [Migration("20210410222550_teamentity")]
-    partial class teamentity
+    [Migration("20210410235832_Team")]
+    partial class Team
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
