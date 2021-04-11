@@ -56,8 +56,9 @@ namespace HowLongApi
 
             services.AddCors(options =>
             {
-                options.AddPolicy("Query",
-                    builder => builder.WithOrigins("https://howlong-front.herokuapp.com/"));
+                options.AddPolicy("MyPolicy",
+                    builder => builder.AllowAnyOrigin().AllowAnyMethod()
+                    );
             });
 
             services.AddAuthentication(options =>
@@ -116,7 +117,7 @@ namespace HowLongApi
 
             app.UseRouting();
 
-            app.UseCors();
+            app.UseCors("MyPolicy");
 
             app.UseAuthentication();
 

@@ -16,7 +16,7 @@ using HowLongApi.Dependencies.Responses;
 
 namespace HowLongApi.Controllers
 {
-    [EnableCors("Query")]
+    [EnableCors("MyPolicy")]
     [Route("api/[controller]")]
     [ApiController]
     public class TeamController : ControllerBase
