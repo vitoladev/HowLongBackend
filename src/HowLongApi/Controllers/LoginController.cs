@@ -7,6 +7,7 @@ using HowLongApi.Security;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
+using static System.Environment;
 
 namespace HowLongApi.Controllers
 {
@@ -34,11 +35,13 @@ namespace HowLongApi.Controllers
                         new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
                     };
 
-                    var chave = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes("s18239411cz/adaq3dsahnanjkjoei#d!@#pds$c!#$!#@"));
+                    var key = GetEnvironmentVariable("key");
+
+                    var chave = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(key));
                     var credenciais = new SigningCredentials(chave, SecurityAlgorithms.HmacSha256);
                     var token = new JwtSecurityToken(
                             issuer: "HowLong",
-                            audience: "User",
+                            audience: "Users",
                             claims: claims,
                             signingCredentials: credenciais,
                             expires: DateTime.Now.AddMinutes(30)
